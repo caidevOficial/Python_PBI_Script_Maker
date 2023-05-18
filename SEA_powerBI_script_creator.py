@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 from tkinter import *
 from tkinter.messagebox import showinfo as alert
 
@@ -26,11 +27,8 @@ class SEAPbiCreator(customtkinter.CTk):
     input and data from a dataframe, and then creates a text file with the script.
     """
     __dataframe = pd.DataFrame()
-    __dataset_values = [
-        "sea_procurement_196220_in", "sea_sales_208868_in",
-        "sea_sales_109534_in", "mssfinsapbw_109534_in"
-    ]
     __file_paths = {
+        "configs": './data/datasets.json',
         "source": './source_pbi_fields.xlsx',
         "destiny": './',
         "sound_error": "./assets/sound/error.mp3",
@@ -52,27 +50,36 @@ class SEAPbiCreator(customtkinter.CTk):
     
     
     def __init__(self):
+        """
+        This function initializes a GUI window with various frames, input fields, and buttons for
+        creating a Power BI script.
+        """
         super().__init__()
 
         # configure window
         self.title("SEA Power BI Script Creator")
         self.__frame_main = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.__frame_main.grid(row=0, column = 0, padx=20, pady=5, columnspan=4, rowspan = 2, sticky="we")
+        self.__frame_main.grid(row=0, column = 0, padx=20, pady=5, columnspan=4, rowspan = 4, sticky="we")
+        
+        self.__banner = PhotoImage(file='./assets/img/banner.png')
+        self.__top_banner = Label(master=self.__frame_main, image=self.__banner, text='Banner')
+        self.__top_banner.grid_configure(row=0, column=0, padx=20, pady=5, columnspan=4, rowspan=1, sticky='we')
         
         self.__frame_input = customtkinter.CTkFrame(self.__frame_main, corner_radius=0, fg_color="transparent")
-        self.__frame_input.grid(row=0, column = 0, padx=20, pady=5, columnspan=2, rowspan = 2, sticky="nsew")
-        
-        self.__frame = customtkinter.CTkFrame(self.__frame_main, corner_radius=0, fg_color="transparent")
-        self.__frame.grid(row=4, padx=20, pady=4, columnspan=5, rowspan = 3, sticky="nsew")
+        self.__frame_input.grid(row=1, column = 0, padx=20, pady=5, columnspan=2, rowspan = 2, sticky="nsew")
         
         self.__txt_table_name = customtkinter.CTkEntry(master=self.__frame_input, height = 14, placeholder_text="Table Name")
-        self.__txt_table_name.grid(row=1, column=0, padx=20, pady=5)
+        self.__txt_table_name.grid(row=0, column=0, padx=20, pady=5)
 
-        self.__combobox_dataset_name = customtkinter.CTkComboBox(master=self.__frame_input, height = 14, width=199, values=self.__dataset_values)
-        self.__combobox_dataset_name.grid(row=1, column=1, columnspan=2, padx=10, pady=(5, 5))
+        self.__combobox_dataset_name = customtkinter.CTkComboBox(master=self.__frame_input, height = 14, width=199, values=self.__open_configs())
+        self.__combobox_dataset_name.grid(row=0, column=1, columnspan=2, padx=10, pady=(5, 5))
 
         self.__btn_add = customtkinter.CTkButton(master=self.__frame_input, height = 20, text="Create Script", command=self.bttn_create_on_click)
-        self.__btn_add.grid(row=2, padx=20, pady=5, columnspan=2, sticky="ew")
+        self.__btn_add.grid(row=1, padx=20, pady=5, columnspan=2, sticky="ew")
+    
+    def __open_configs(self) -> list[str]:
+        with open(self.__file_paths['configs'], 'r') as configs:
+            return json.load(configs)['datasets']
     
     def __open_file(self) -> bool:
         """
@@ -101,6 +108,7 @@ class SEAPbiCreator(customtkinter.CTk):
         try:
             self.__table_name = self.__txt_table_name.get()
             self.__dataset_name = self.__combobox_dataset_name.get()
+            if not self.__table_name: raise Exception('Empty field Table Name')
             for _, row in self.__dataframe.iterrows():
                 replaced = schema.replace('TECH', row['TECH_NAME']).replace('FUNC', row['FUNC_NAME'])
                 if first:
