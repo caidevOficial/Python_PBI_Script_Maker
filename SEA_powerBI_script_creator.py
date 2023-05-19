@@ -22,7 +22,7 @@ import pandas as pd
 import customtkinter
 import pygame.mixer as mixer 
 
-class SEAPbiCreator(customtkinter.CTk):
+class SEAPbiMaker(customtkinter.CTk):
     """
     The SEAPbiCreator class creates a Power BI script by replacing placeholders in a template with user
     input and data from a dataframe, and then creates a text file with the script.
@@ -184,7 +184,7 @@ class SEAPbiCreator(customtkinter.CTk):
         """
         sound = mixer.Sound(self.__file_paths[audio_name])
         mixer.Sound.play(sound)
-    
+
     def __clear_console(self) -> None:
         """
         This function clears the console screen in Python.
@@ -211,5 +211,5 @@ class SEAPbiCreator(customtkinter.CTk):
         
 
 if __name__ == "__main__":
-    SEA_PBI_Script_Creator_app = SEAPbiCreator()
+    SEA_PBI_Script_Creator_app = SEAPbiMaker()
     SEA_PBI_Script_Creator_app.mainloop()

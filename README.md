@@ -16,7 +16,10 @@
 # SEA Power BI Script Maker
 #### Developed by: _Facundo Falcone_ <amilcar.f.falcone@accenture.com>
 <br>
-## How to use:
+
+### Important: You`ll need Python 3.10.X
+
+### How to use:
 
 As a first step, install the necessary libraries to run the program, for this you must execute the command in the console:
 
