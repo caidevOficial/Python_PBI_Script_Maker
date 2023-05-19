@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import os
 from tkinter import *
 from tkinter.messagebox import showinfo as alert
 
@@ -97,16 +98,16 @@ class SEAPbiCreator(customtkinter.CTk):
         :return: a boolean value of True if the script is successfully created, otherwise it will raise
         an exception.
         """
-        self.__template = """\
-        let
-            Source = GoogleBigQuery.Database([BillingProject = ProjectID, UseStorageApi = false]),
-            Navigation = Source{[Name = DatalakeID]}[Data],
-            #"Navigation 1" = Navigation{[Name = "DATASET_NAME", Kind = "Schema"]}[Data],
-            #"Navigation 2" = #"Navigation 1"{[Name = "TABLE_NAME", Kind = "Table"]}[Data],
-            #"Renamed columns" = Table.RenameColumns(#"Navigation 2", {})
-        in
-            #"Renamed columns"
-        """
+        template = """\
+    let
+        Source = GoogleBigQuery.Database([BillingProject = ProjectID, UseStorageApi = false]),
+        Navigation = Source{[Name = DatalakeID]}[Data],
+        #"Navigation 1" = Navigation{[Name = "DATASET_NAME", Kind = "Schema"]}[Data],
+        #"Navigation 2" = #"Navigation 1"{[Name = "TABLE_NAME", Kind = "Table"]}[Data],
+        #"Renamed columns" = Table.RenameColumns(#"Navigation 2", {})
+    in
+        #"Renamed columns"
+    """
         message = ''
         first = True
         schema = '{"TECH", "FUNC"}'
@@ -120,7 +121,7 @@ class SEAPbiCreator(customtkinter.CTk):
                     message += replaced
                     first = False
                 else: message += f", {replaced}"
-            self.__template = self.__template\
+            self.__template = template\
                 .replace('(#"Navigation 2", {})', f'(#"Navigation 2", {{{message}}})')\
                 .replace('DATASET_NAME', self.__dataset_name)\
                 .replace('TABLE_NAME', self.__table_name)
@@ -184,11 +185,19 @@ class SEAPbiCreator(customtkinter.CTk):
         sound = mixer.Sound(self.__file_paths[audio_name])
         mixer.Sound.play(sound)
     
+    def __clear_console(self) -> None:
+        """
+        This function clears the console screen in Python.
+        """
+        if os.name in ['ce', 'nt', 'dos']: os.system("cls")
+        else: os.system("clear")
+        
     def bttn_create_on_click(self):
         """
         This function initializes a mixer and tries to open a file, create a script, and create a text
         file, catching any exceptions and displaying an error message if necessary.
         """
+        self.__clear_console()
         mixer.init()
         
         try:
