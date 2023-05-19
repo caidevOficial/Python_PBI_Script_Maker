@@ -34,16 +34,6 @@ class SEAPbiCreator(customtkinter.CTk):
         "sound_error": "./assets/sound/error.mp3",
         "sound_success": "./assets/sound/success.mp3"
     }
-    __template = """\
-    let
-        Source = GoogleBigQuery.Database([BillingProject = ProjectID, UseStorageApi = false]),
-        Navigation = Source{[Name = DatalakeID]}[Data],
-        #"Navigation 1" = Navigation{[Name = "DATASET_NAME", Kind = "Schema"]}[Data],
-        #"Navigation 2" = #"Navigation 1"{[Name = "TABLE_NAME", Kind = "Table"]}[Data],
-        #"Renamed columns" = Table.RenameColumns(#"Navigation 2", {})
-    in
-        #"Renamed columns"
-    """
     __table_name: str = None
     __dataset_name: str = None
     __full_path: str = None
@@ -56,26 +46,31 @@ class SEAPbiCreator(customtkinter.CTk):
         """
         super().__init__()
 
-        # configure window
         self.title("SEA Power BI Script Creator")
+        # Main Frame
         self.__frame_main = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.__frame_main.grid(row=0, column = 0, padx=20, pady=5, columnspan=4, rowspan = 4, sticky="we")
         
+        # Banner Img (inside main frame)
         self.__banner = PhotoImage(file='./assets/img/banner.png')
         self.__top_banner = Label(master=self.__frame_main, image=self.__banner, text='Banner')
-        self.__top_banner.grid_configure(row=0, column=0, padx=20, pady=5, columnspan=4, rowspan=1, sticky='we')
+        self.__top_banner.grid_configure(row=0, column=0, padx=20, pady=5, columnspan=5, rowspan=1, sticky='we')
         
+        # Secondary Frame (inside main frame) for TextBox, ComboBox & Button
         self.__frame_input = customtkinter.CTkFrame(self.__frame_main, corner_radius=0, fg_color="transparent")
-        self.__frame_input.grid(row=1, column = 0, padx=20, pady=5, columnspan=2, rowspan = 2, sticky="nsew")
+        self.__frame_input.grid(row=1, column = 0, padx=20, pady=5, columnspan=4, rowspan = 2, sticky="nsew")
         
+        # Text Box
         self.__txt_table_name = customtkinter.CTkEntry(master=self.__frame_input, height = 14, placeholder_text="Table Name")
-        self.__txt_table_name.grid(row=0, column=0, padx=20, pady=5)
+        self.__txt_table_name.grid(row=0, column=0, columnspan=3, padx=20, pady=5, sticky="nsew")
 
+        # Combo Box
         self.__combobox_dataset_name = customtkinter.CTkComboBox(master=self.__frame_input, height = 14, width=199, values=self.__open_configs())
-        self.__combobox_dataset_name.grid(row=0, column=1, columnspan=2, padx=10, pady=(5, 5))
+        self.__combobox_dataset_name.grid(row=0, column=3, columnspan=2, padx=10, pady=(5, 5), sticky="nsew")
 
+        # Button
         self.__btn_add = customtkinter.CTkButton(master=self.__frame_input, height = 20, text="Create Script", command=self.bttn_create_on_click)
-        self.__btn_add.grid(row=1, padx=20, pady=5, columnspan=2, sticky="ew")
+        self.__btn_add.grid(row=1, padx=20, pady=5, columnspan=3, sticky="news")
     
     def __open_configs(self) -> list[str]:
         with open(self.__file_paths['configs'], 'r') as configs:
@@ -101,6 +96,16 @@ class SEAPbiCreator(customtkinter.CTk):
         from a dataframe.
         :return: a boolean value of True if the script is successfully created, otherwise it will raise
         an exception.
+        """
+        self.__template = """\
+        let
+            Source = GoogleBigQuery.Database([BillingProject = ProjectID, UseStorageApi = false]),
+            Navigation = Source{[Name = DatalakeID]}[Data],
+            #"Navigation 1" = Navigation{[Name = "DATASET_NAME", Kind = "Schema"]}[Data],
+            #"Navigation 2" = #"Navigation 1"{[Name = "TABLE_NAME", Kind = "Table"]}[Data],
+            #"Renamed columns" = Table.RenameColumns(#"Navigation 2", {})
+        in
+            #"Renamed columns"
         """
         message = ''
         first = True
