@@ -1,7 +1,7 @@
 <table>
     <tr>
         <td align='center'>
-            <img alt="Logo SEA Team" src="./assets/img/banner.png?raw=true" height="145px" />
+            <img alt="Logo SEA Team" src="https://github.com/caidevOficial/Logos/raw/master/Personales/Personal_Logo_Gif.gif?raw=true?raw=true" height="145px" />
         </td>
     </tr>
     <tr>
@@ -13,8 +13,8 @@
 
 ---
 
-# SEA Power BI Script Maker
-#### Developed by: _Facundo Falcone_ <amilcar.f.falcone@accenture.com>
+# Power BI Script Maker
+#### Developed by: _Facundo Falcone_ <CaidevOficial>
 <br>
 
 ### Important: You`ll need Python 3.10.X
@@ -46,7 +46,7 @@ As a second step, you should edit the file [source_pbi_fields.xlsx](source_pbi_f
     <tbody>
         <tr>
             <td>
-                <img src='./assets/img/config_doc.png'>
+                <img src='./assets/img/config_doc_2.png'>
             </td>
         </tr>
     </tbody>
@@ -64,7 +64,7 @@ This action will create a file with extension _.vba_ which will contain the scri
     <tbody>
         <tr>
             <td>
-                <img src='./assets/img/app_gui.png'>
+                <img src='./assets/img/app_gui_2.png'>
             </td>
         </tr>
     </tbody>
@@ -73,15 +73,14 @@ This action will create a file with extension _.vba_ which will contain the scri
 The program will create a file like: **_dataset_name.table_name.vba_** which will contain the script to copy in the advanced settings of **Power BI**
 
 ```js
-    let
-        Source = GoogleBigQuery.Database([BillingProject = ProjectID, UseStorageApi = false]),
-        Navigation = Source{[Name = DatalakeID]}[Data],
-        #"Navigation 1" = Navigation{[Name = "sea_procurement_196220_in", Kind = "Schema"]}[Data],
-        #"Navigation 2" = #"Navigation 1"{[Name = "sea_sap_fieldglass_sow_in", Kind = "Table"]}[Data],
-        #"Renamed columns" = Table.RenameColumns(#"Navigation 2", {{"business_unit", "Business Unit"}, {"business_unit_code", "Business Unit Code"}, {"country_region", "Country Region"}, {"vendor_id", "Vendor ID"}, {"supplier_code", "Supplier Code"}, {"supplier", "Supplier"}, {"supplier_invitation_create_time", "Supplier Invitation Create Time"}, {"supplier_invitation_accept_time", "Supplier Invitation Accept Time"}, {"supplier_invitation_status", "Supplier Invitation Status"}, {"supplier_status", "Supplier Status"}, {"count_of_statement_of_work", "Count of SOWs"}, {"supplier_onboarding_time", "Supplier Onboarding Time"}, {"submit_for_supplier_review_date", "Submit for Supplier Review Date"}, {"approval_sequence", "Approval Sequence"}, {"activation_status", "Activation Status"}, {"supplier_response_time", "Supplier Response Time (hours)"}, {"number_of_sites", "Number of Sites"}})
-    in
-        #"Renamed columns"
-    
+let
+    Source = GoogleBigQuery.Database([BillingProject = ProjectID, UseStorageApi = false]),
+    Navigation = Source{[Name = DatalakeID]}[Data],
+    #"Navigation 1" = Navigation{[Name = "dataset_number_2", Kind = "Schema"]}[Data],
+    #"Navigation 2" = #"Navigation 1"{[Name = "pokemons", Kind = "Table"]}[Data],
+    #"Renamed columns" = Table.RenameColumns(#"Navigation 2", {{"field_1", "Field Number 1"}, {"field_2", "Field Number 2"}, {"field_3", "Field Number 3"}, {"field_4", "Field Number 4"}, {"field_5", "Field Number 5"}, {"field_6", "Field Number 6"}, {"field_7", "Field Number 7"}, {"field_8", "Field Number 8"}, {"field_9", "Field Number 9"}, {"field_10", "Field Number 10"}, {"field_11", "Field Number 11"}, {"field_12", "Field Number 12"}, {"field_13", "Field Number 13"}, {"field_14", "Field Number 14"}, {"field_15", "Field Number 15"}, {"field_16", "Field Number 16"}, {"field_17", "Field Number 17"}})
+in
+    #"Renamed columns"
 ```
 
 <table align='center'>

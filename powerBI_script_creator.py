@@ -22,9 +22,9 @@ import pandas as pd
 import customtkinter
 import pygame.mixer as mixer 
 
-class SEAPbiMaker(customtkinter.CTk):
+class PbiScriptMaker(customtkinter.CTk):
     """
-    The SEAPbiCreator class creates a Power BI script by replacing placeholders in a template with user
+    The PbiScriptMaker class creates a Power BI script by replacing placeholders in a template with user
     input and data from a dataframe, and then creates a text file with the script.
     """
     __dataframe = pd.DataFrame()
@@ -47,13 +47,13 @@ class SEAPbiMaker(customtkinter.CTk):
         """
         super().__init__()
 
-        self.title("SEA Power BI Script Creator")
+        self.title("Power BI Script Creator")
         # Main Frame
         self.__frame_main = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.__frame_main.grid(row=0, column = 0, padx=20, pady=5, columnspan=4, rowspan = 4, sticky="we")
         
         # Banner Img (inside main frame)
-        self.__banner = PhotoImage(file='./assets/img/banner.png')
+        self.__banner = PhotoImage(file='./assets/img/banner_2.png')
         self.__top_banner = Label(master=self.__frame_main, image=self.__banner, text='Banner')
         self.__top_banner.grid_configure(row=0, column=0, padx=20, pady=5, columnspan=5, rowspan=1, sticky='we')
         
@@ -61,19 +61,25 @@ class SEAPbiMaker(customtkinter.CTk):
         self.__frame_input = customtkinter.CTkFrame(self.__frame_main, corner_radius=0, fg_color="transparent")
         self.__frame_input.grid(row=1, column = 0, padx=20, pady=5, columnspan=4, rowspan = 2, sticky="nsew")
         
-        # Text Box
+        # Text Box (inside secondary frame)
         self.__txt_table_name = customtkinter.CTkEntry(master=self.__frame_input, height = 14, placeholder_text="Table Name")
         self.__txt_table_name.grid(row=0, column=0, columnspan=3, padx=20, pady=5, sticky="nsew")
 
-        # Combo Box
+        # Combo Box (inside secondary frame)
         self.__combobox_dataset_name = customtkinter.CTkComboBox(master=self.__frame_input, height = 14, width=199, values=self.__open_configs())
         self.__combobox_dataset_name.grid(row=0, column=3, columnspan=2, padx=10, pady=(5, 5), sticky="nsew")
 
-        # Button
+        # Button (inside secondary frame)
         self.__btn_add = customtkinter.CTkButton(master=self.__frame_input, height = 20, text="Create Script", command=self.bttn_create_on_click)
         self.__btn_add.grid(row=1, padx=20, pady=5, columnspan=3, sticky="news")
     
     def __open_configs(self) -> list[str]:
+        """
+        This function opens a JSON file containing dataset configurations and returns a list of dataset
+        names.
+        :return: A list of strings containing the names of datasets, which are read from a JSON file
+        located at the path specified in the `__file_paths` dictionary under the key `'configs'`.
+        """
         with open(self.__file_paths['configs'], 'r') as configs:
             return json.load(configs)['datasets']
     
@@ -91,12 +97,11 @@ class SEAPbiMaker(customtkinter.CTk):
         except Exception as e:
             raise FileNotFoundError(e.with_traceback(None))
 
-    def __create_script(self) -> str:
+    def __create_script(self) -> bool:
         """
-        This function creates a script by replacing placeholders in a template with user input and data
-        from a dataframe.
-        :return: a boolean value of True if the script is successfully created, otherwise it will raise
-        an exception.
+        This function creates a script in Power Query language for renaming columns in a Google BigQuery
+        table.
+        :return: a boolean value, either True or False.
         """
         template = """\
     let
@@ -130,11 +135,12 @@ class SEAPbiMaker(customtkinter.CTk):
         except Exception as e:
             raise e.with_traceback(None)
     
-    def __create_txt_file(self):
+    def __create_txt_file(self) -> bool:
         """
-        This function creates a text file with a given name and writes a template to it, and then
-        displays a success message and plays a sound.
-        :return: a boolean value of True if the file creation is successful.
+        This function creates a text file with a given name and writes a template to it, and returns
+        True if successful.
+        :return: a boolean value, either True or False. In this case, it returns True if the file was
+        successfully created and False if an exception was raised.
         """
         try:
             self.__full_path = f"{self.__file_paths['destiny']}{self.__dataset_name}.{self.__table_name}.vba"
@@ -153,10 +159,8 @@ class SEAPbiMaker(customtkinter.CTk):
         success, information).
         
         :param message: A string containing the message to be displayed
-        :type message: str
         :param message_type: A string indicating the type of message being passed (e.g. "Error",
         "Success", "Info")
-        :type message_type: str
         """
         _b_red: str = '\033[41m'
         _b_green: str = '\033[42m'
@@ -180,7 +184,6 @@ class SEAPbiMaker(customtkinter.CTk):
         :param audio_name: audio_name is a string parameter that represents the name of the audio file
         to be played. It is used to access the file path of the audio file from a dictionary of file
         paths
-        :type audio_name: str
         """
         sound = mixer.Sound(self.__file_paths[audio_name])
         mixer.Sound.play(sound)
@@ -192,7 +195,7 @@ class SEAPbiMaker(customtkinter.CTk):
         if os.name in ['ce', 'nt', 'dos']: os.system("cls")
         else: os.system("clear")
         
-    def bttn_create_on_click(self):
+    def bttn_create_on_click(self) -> None:
         """
         This function initializes a mixer and tries to open a file, create a script, and create a text
         file, catching any exceptions and displaying an error message if necessary.
@@ -211,5 +214,5 @@ class SEAPbiMaker(customtkinter.CTk):
         
 
 if __name__ == "__main__":
-    SEA_PBI_Script_Creator_app = SEAPbiMaker()
-    SEA_PBI_Script_Creator_app.mainloop()
+    PBI_Script_Creator_app = PbiScriptMaker()
+    PBI_Script_Creator_app.mainloop()
